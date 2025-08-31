@@ -5,65 +5,29 @@ import './App.css'
 import Filter from "./Filter"
 import PersonForm from "./PersonForm"
 import Persons from "./Persons"
+import axios from "axios"
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number:"1234567" }
-  ]);
-  const [newName, setNewName] = useState("");
-  const [newNumber, setNewNumber] = useState("");
-  const [filter, setFilter] = useState("");
+  const [persons, setPersons] = useState([])
 
-  const addPerson = (event) => {
-    event.preventDefault();
-    const exists = persons.some(person => person.name === newName);
-    if (exists) {
-      alert(`${newName} is already added to phonebook`);
-      return;
-    }
-    const personObject = { 
-      name: newName, 
-      number: newNumber 
-    };
-
-    setPersons(persons.concat(personObject));
-    setNewName("");
-    setNewNumber("");
-  };
-
-  const handleNameChange = (event) => {
-    setNewName(event.target.value);
-  };
-
-  const handleNumberChange = (event) => {
-    setNewNumber(event.target.value);
-  };
-    const handleFilterChange = (event) => {
-    setFilter(event.target.value);
-  };
-
-  const personsToShow = persons.filter(person =>
-    person.name.toLowerCase().includes(filter.toLowerCase())
-  );
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/persons")
+      .then(response => {
+        setPersons(response.data)
+      })
+  }, [])
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <Filter filter={filter} handleFilterChange={handleFilterChange} />
-
-      <h3>add a new</h3>
-      <PersonForm
-        addPerson={addPerson}
-        newName={newName}
-        handleNameChange={handleNameChange}
-        newNumber={newNumber}
-        handleNumberChange={handleNumberChange}
-      />
-
-      <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow} />
+      <ul>
+        {persons.map(person => 
+          <li key={person.id}>{person.name} {person.number}</li>
+        )}
+      </ul>
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App
