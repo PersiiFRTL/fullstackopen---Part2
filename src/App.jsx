@@ -6,71 +6,81 @@ import Filter from "./Filter"
 import PersonForm from "./PersonForm"
 import Persons from "./Persons"
 import axios from "axios"
+import Notification from './Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
-  const [newName, setNewName] = useState("")
-  const [newNumber, setNewNumber] = useState("")
-  const [filter, setFilter] = useState("")
+  const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
+  const [notification, setNotification] = useState(null)
 
-  
   useEffect(() => {
     axios
-      .get("http://localhost:3001/persons")
+      .get('http://localhost:3001/persons')
       .then(response => {
         setPersons(response.data)
       })
   }, [])
 
-  
-  const handleNameChange = (event) => setNewName(event.target.value)
-  const handleNumberChange = (event) => setNewNumber(event.target.value)
-  const handleFilterChange = (event) => setFilter(event.target.value)
-
-  
   const addPerson = (event) => {
     event.preventDefault()
+    const personObject = {
+      name: newName,
+      number: newNumber
+    }
 
-    
-    if (persons.some(person => person.name === newName)) {
+    const existingPerson = persons.find(p => p.name === newName)
+
+    if (existingPerson) {
       alert(`${newName} is already added to phonebook`)
       return
     }
 
-    const newPerson = {
-      name: newName,
-      number: newNumber,
-    }
-
     axios
-      .post("http://localhost:3001/persons", newPerson)
+      .post('http://localhost:3001/persons', personObject)
       .then(response => {
-        setPersons(persons.concat(response.data)) 
-        setNewName("")   
-        setNewNumber("")
+        setPersons(persons.concat(response.data))
+        setNewName('')
+        setNewNumber('')
+        setNotification(`Added ${response.data.name}`)
+        setTimeout(() => {
+          setNotification(null)
+        }, 3000)
       })
   }
 
-  const personsToShow = persons.filter(person =>
-    person.name.toLowerCase().includes(filter.toLowerCase())
-  )
+  const handleNameChange = (event) => {
+    setNewName(event.target.value)
+  }
+
+  const handleNumberChange = (event) => {
+    setNewNumber(event.target.value)
+  }
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <Filter value={filter} onChange={handleFilterChange} />
 
-      <h3>Add a new</h3>
-      <PersonForm 
-        addPerson={addPerson}
-        newName={newName}
-        handleNameChange={handleNameChange}
-        newNumber={newNumber}
-        handleNumberChange={handleNumberChange}
-      />
+      <Notification message={notification} />
 
-      <h3>Numbers</h3>
-      <Persons persons={personsToShow} />
+      <form onSubmit={addPerson}>
+        <div>
+          name: <input value={newName} onChange={handleNameChange} />
+        </div>
+        <div>
+          number: <input value={newNumber} onChange={handleNumberChange} />
+        </div>
+        <div>
+          <button type="submit">add</button>
+        </div>
+      </form>
+
+      <h2>Numbers</h2>
+      <ul>
+        {persons.map(person =>
+          <li key={person.id}>{person.name} {person.number}</li>
+        )}
+      </ul>
     </div>
   )
 }
