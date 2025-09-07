@@ -59,6 +59,8 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
 
+      <Notification message={notification} type={notificationType} />
+
       <Filter value={filter} onChange={handleFilterChange} />
 
       <h3>Add a new</h3>

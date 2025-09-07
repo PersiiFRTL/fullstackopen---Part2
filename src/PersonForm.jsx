@@ -1,14 +1,33 @@
-const PersonForm = ({ addPerson, newName, handleNameChange, newNumber, handleNumberChange }) => {
+import TextField from '@mui/material/TextField'
+import Button from '@mui/material/Button'
+
+const PersonForm = ({ onSubmit, newName, handleNameChange, newNumber, handleNumberChange }) => {
   return (
-    <form onSubmit={addPerson}>
+    <form onSubmit={onSubmit}>
       <div>
-        name: <input value={newName} onChange={handleNameChange} />
+        <TextField 
+          label="Name" 
+          variant="outlined" 
+          size="small"
+          value={newName} 
+          onChange={handleNameChange} 
+          style={{ marginBottom: 10 }}
+        />
       </div>
       <div>
-        number: <input value={newNumber} onChange={handleNumberChange} />
+        <TextField 
+          label="Number" 
+          variant="outlined" 
+          size="small"
+          value={newNumber} 
+          onChange={handleNumberChange} 
+          style={{ marginBottom: 10 }}
+        />
       </div>
       <div>
-        <button type="submit">add</button>
+        <Button type="submit" variant="contained" color="primary">
+          Add
+        </Button>
       </div>
     </form>
   )

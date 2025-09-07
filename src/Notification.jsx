@@ -1,12 +1,12 @@
-const Notification = ({ message }) => {
-  if (message === null) {
-    return null
-  }
+import Alert from '@mui/material/Alert'
+
+const Notification = ({ message, type = "success" }) => {
+  if (!message) return null
 
   return (
-    <div className="notification">
+    <Alert severity={type} style={{ marginBottom: 15 }}>
       {message}
-    </div>
+    </Alert>
   )
 }
 
